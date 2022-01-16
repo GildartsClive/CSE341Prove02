@@ -1,8 +1,36 @@
 const express = require('express');
-const mainRoutes = require('./routes/index');
+const bodyParser = require('body-parser');
 
 const app = express();
 
-app.use(mainRoutes);
+const users = [];
+
+app.set('view engine', 'ejs');
+app.set('views', 'views');
+
+app.use(bodyParser.urlencoded({
+    extended: false
+}));
+
+app.get('/', (req, res, next) => {
+    res.render('index', {
+        pageTitle: 'Add User'
+    });
+});
+
+app.get('/users', (req, res, next) => {
+    res.render('users', {
+        pageTitle: 'User',
+        users: users,
+        hasUsers: users.length > 0
+    });
+});
+
+app.post('/add-user', (req, res, next) => {
+    users.push({
+        name: req.body.username
+    });
+    res.redirect('/users');
+});
 
 app.listen(3000);
